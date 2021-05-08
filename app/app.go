@@ -257,18 +257,18 @@ func (app *App) CheckTx(req abcitypes.RequestCheckTx) abcitypes.ResponseCheckTx 
 	if err != nil {
 		return abcitypes.ResponseCheckTx{Code: CannotRecoverSender, Info: "invalid sender: " + err.Error()}
 	}
-	if req.Type != abcitypes.CheckTxType_Recheck && app.touchedAddrs != nil {
-		if _, ok := app.touchedAddrs[sender]; ok {
-			return abcitypes.ResponseCheckTx{Code: HasPendingTx, Info: "still has pending transaction"}
-		}
-	}
+	//if req.Type != abcitypes.CheckTxType_Recheck && app.touchedAddrs != nil {
+	//	if _, ok := app.touchedAddrs[sender]; ok {
+	//		return abcitypes.ResponseCheckTx{Code: HasPendingTx, Info: "still has pending transaction"}
+	//	}
+	//}
 	//todo: replace with engine param
 	if tx.Gas() > ebp.MaxTxGasLimit {
 		return abcitypes.ResponseCheckTx{Code: GasLimitInvalid, Info: "invalid gas limit"}
 	}
 	acc, err := ctx.CheckNonce(sender, tx.Nonce())
 	if err != nil {
-		return abcitypes.ResponseCheckTx{Code: AccountNonceMismatch, Info: "bad nonce: " + err.Error()}
+		//return abcitypes.ResponseCheckTx{Code: AccountNonceMismatch, Info: "bad nonce: " + err.Error()}
 	}
 	gasPrice, _ := uint256.FromBig(tx.GasPrice())
 	if gasPrice.Cmp(uint256.NewInt().SetUint64(app.lastMinGasPrice)) < 0 {
@@ -509,9 +509,9 @@ func (app *App) Commit() abcitypes.ResponseCommit {
 		panic("system balance not enough!")
 	}
 	if app.txEngine.StandbyQLen() != 0 {
-		if sysB.Cmp(uint256.NewInt()) <= 0 {
-			panic("system account balance should have some pending gas fee")
-		}
+		//if sysB.Cmp(uint256.NewInt()) <= 0 {
+		//	panic("system account balance should have some pending gas fee")
+		//}
 	} else {
 		// distribute extra balance to validators
 		blockReward = *sysB
